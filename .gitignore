@@ -7,6 +7,12 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+.settings
+.project
+.classpath
+test-output/
+node_modules/**
+.orig
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
