@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import br.com.hevertonluizlucca.apichallenge.model.Token;
 import br.com.hevertonluizlucca.apichallenge.model.User;
@@ -70,6 +71,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Boolean renovarToken(String token) {
 		Token tokenDto = this.tokenRepository.getByToken(token);
+		if(tokenDto == null || StringUtils.isEmpty(tokenDto.getToken())) {
+			return false;
+		}
 		String refreshedToken = jwtTokenUtil.refreshToken(token);
 		tokenDto.updateToken(refreshedToken, new Timestamp(jwtTokenUtil.getExpirationDateFromToken(token).getTime()));
 		this.tokenRepository.save(tokenDto);
