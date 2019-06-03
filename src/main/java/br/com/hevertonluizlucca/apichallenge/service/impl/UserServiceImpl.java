@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -69,14 +68,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Boolean renovarToken(String token) {
+	public Token renovarToken(String token) {
 		Token tokenDto = this.tokenRepository.getByToken(token);
 		if(tokenDto == null || StringUtils.isEmpty(tokenDto.getToken())) {
-			return false;
+			return null;
 		}
 		String refreshedToken = jwtTokenUtil.refreshToken(token);
 		tokenDto.updateToken(refreshedToken, new Timestamp(jwtTokenUtil.getExpirationDateFromToken(token).getTime()));
 		this.tokenRepository.save(tokenDto);
-		return true;
+		return tokenDto;
 	}
 }

@@ -1,15 +1,11 @@
 package br.com.hevertonluizlucca.apichallenge.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.hevertonluizlucca.apichallenge.model.Token;
 import br.com.hevertonluizlucca.apichallenge.model.UsuarioAutenticado;
 import br.com.hevertonluizlucca.apichallenge.service.UserService;
 import io.swagger.annotations.Api;
@@ -36,14 +33,18 @@ public class UserController {
 
 	@ApiOperation(value = "Renovar token.")
 	@PatchMapping()
-	public ResponseEntity<Boolean> renovar(@RequestHeader(value = "token") String token) {
-		ResponseEntity<Boolean> response = null;
+	public ResponseEntity<String> renovar(@RequestHeader(value = "token") String token) {
+		ResponseEntity<String> response = null;
 		try {
-			Boolean renovarToken = userService.renovarToken(token);
-			response = new ResponseEntity<Boolean>(renovarToken, HttpStatus.OK);
+			Token refreshedToken = userService.renovarToken(token);
+			if(refreshedToken == null || StringUtils.isEmpty(refreshedToken.getToken())) {
+				response = new ResponseEntity<String>("false", HttpStatus.OK);
+			}else {
+				response = new ResponseEntity<String>("true, new token is: "+refreshedToken.getToken(), HttpStatus.OK);
+			}
 		} catch (Exception e) {
 			log.error("Ocorreu um erro durante a autenticação.");
-			response = new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+			response = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		return response;

@@ -2,6 +2,7 @@ package br.com.hevertonluizlucca.apichallenge.service;
 
 import java.util.Optional;
 
+import br.com.hevertonluizlucca.apichallenge.model.Token;
 import br.com.hevertonluizlucca.apichallenge.model.User;
 import br.com.hevertonluizlucca.apichallenge.model.UsuarioAutenticado;
 
@@ -18,6 +19,6 @@ public interface UserService {
 
 	UsuarioAutenticado autenticar(String login, String senha);
 
-	Boolean renovarToken(String token);
+	Token renovarToken(String token);
 
 }
